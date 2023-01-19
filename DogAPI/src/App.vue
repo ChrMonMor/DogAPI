@@ -1,85 +1,80 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+import axios from 'axios'
+import { ref } from 'vue'
+
+export default {
+  data () {
+    return {
+      info: null,
+      doglist: null,
+      race: '',
+    }
+  },
+  mounted (){
+    axios
+      .get('https://dog.ceo/api/breeds/image/random')
+      .then(response => (this.info = response.data.message))
+      .catch(err => (console.log(err)))
+    axios
+      .get('https://dog.ceo/api/breeds/list/all')
+      .then(response => 
+      {
+        this.doglist = response.data.message;
+        console.log(response.data.message);
+      })
+      .catch(err => (console.log(err)))
+      .finally()
+  },
+  methods: {
+    getOtherDog() {
+      if (this.race != ''){
+        axios
+          .get('https://dog.ceo/api/breed/'+this.race+'/images/random')
+          .then(response => (this.info = response.data.message))
+          .catch(err => (console.log(err)))
+      }
+      else {
+        axios
+          .get('https://dog.ceo/api/breeds/image/random')
+          .then(response => (this.info = response.data.message))
+          .catch(err => (console.log(err)))
+      }
+    },
+    onChange(e){
+      this.race = e.target.value
+    }
+  }
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <select name="selected" id="" @change="onChange($event)">
+      <option value="">---Race---</option>
+      <option v-for="(key, value) in this.doglist" :value="value"> {{ value }}</option>
+  </select>
+  <img :src="info" alt="dog picture">
+  <button @click="getOtherDog()">MORE!</button>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+img {
+  height: 400px;
+  width: 400px;
 }
+option {
+  text-transform: capitalize;
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
 }
-
-nav {
-  width: 100%;
-  font-size: 12px;
+* {
   text-align: center;
-  margin-top: 2rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+body {
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    padding: 0 15px;
 }
 </style>
