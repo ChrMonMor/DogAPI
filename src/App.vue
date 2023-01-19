@@ -42,6 +42,7 @@ export default {
     },
     onChange(e){
       this.race = e.target.value
+      this.getOtherDog()
     }
   }
 }
