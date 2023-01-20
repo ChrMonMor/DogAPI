@@ -42,7 +42,7 @@ export default {
     },
     onChange(e){
       this.race = e.target.value
-      this.getOtherDog()
+      this.fetch_dog()
     },
   }
 }
